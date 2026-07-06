@@ -13,19 +13,14 @@ export default function Login() {
   const supabase = createClient()
 
   const handleLogin = async () => {
-  setLoading(true);
-  // 🔥 MODE TEST : connexion simulée (pas de Supabase)
-  try {
-    // Simule un utilisateur connecté
-    const mockUser = { id: 'test-uid', full_name: 'Emmanuel', phone_number: '90123892' };
-    localStorage.setItem('supabase.auth.user', JSON.stringify(mockUser));
-    alert('✅ Connexion simulée !');
-    setTimeout(() => router.push('/profile'), 1500);
-  } catch (err) {
-    alert('Erreur: ' + err.message);
+    setLoading(true)
+    const email = creds.phone.includes('@') ? creds.phone : `${creds.phone}@divinegrace.tg`
+    const { error } = await supabase.auth.signInWithPassword({ email, password: creds.password })
+    setLoading(false)
+    if (!error) router.push('/profile')
+    else alert('Erreur: ' + error.message)
   }
-  setLoading(false);
-  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-purple-50 to-white">
       <div className="w-full max-w-sm space-y-6">
@@ -39,4 +34,4 @@ export default function Login() {
       </div>
     </div>
   )
-          }
+      }
