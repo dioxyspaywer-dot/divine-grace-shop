@@ -15,13 +15,24 @@ export default function Login() {
   const handleLogin = async () => {
     if (!creds.email || !creds.password) return alert('Email et mot de passe requis')
     if (creds.password.length < 6) return alert('Min 6 caractères')
+    
     setLoading(true)
     const { error } = await supabase.auth.signInWithPassword({
       email: creds.email,
       password: creds.password,
     })
     setLoading(false)
-    if (error) return alert(error.message)
+
+    if (error) {
+      // Message plus clair pour l'utilisateur
+      if (error.message.includes('Email not confirmed')) {
+        alert('Erreur : Votre compte n\'est pas encore confirmé. Veuillez vérifier votre boîte mail ou contacter le support.')
+      } else {
+        alert(error.message)
+      }
+      return
+    }
+    
     router.push('/profile')
   }
 
